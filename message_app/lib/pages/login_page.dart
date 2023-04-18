@@ -53,7 +53,7 @@ class _BodyState extends State<Body> {
       onPressed: login,
       autofocus: true,
       style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.grey[400],
+          foregroundColor: Colors.grey[600],
           backgroundColor: Colors.grey[50],
           fixedSize: const Size(240, 46),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),

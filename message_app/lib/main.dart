@@ -11,7 +11,7 @@ Future<void> main() async {
   );
 
   // await Firebase.initializeApp();
-  print('====> main | Firebase initialized');
+  // print('====> main | Firebase initialized');
   runApp(MyApp());
 }
 
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
               print('====> main | error: ${snapshot.error.toString()}');
               return Text('====> main | ${snapshot.error.toString()}');
             } else if (snapshot.hasData) {
-              print('====> main | login: ${snapshot.data.toString()}');
+              // print('====> main | login: ${snapshot.toString()}');
               return const LoginPage();
             } else {
               const Center(
