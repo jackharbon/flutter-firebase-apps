@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:message_app/pages/home_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:message_app/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -10,8 +11,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // await Firebase.initializeApp();
-  // print('====> main | Firebase initialized');
+  print('====> main | Firebase initialized');
   runApp(MyApp());
 }
 
@@ -24,6 +24,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Message App',
         debugShowCheckedModeBanner: false,
+        supportedLocales: const [Locale('pl', 'PL'), Locale('en', 'GB')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         theme: ThemeData(
           primarySwatch: Colors.orange,
           useMaterial3: true,
@@ -40,10 +46,16 @@ class MyApp extends StatelessWidget {
               return const LoginPage();
             } else {
               const Center(
-                child: CircularProgressIndicator(),
+                child: SpinKitFadingCircle(
+                  color: Colors.amber,
+                  size: 100.0,
+                ),
               );
             }
-            return const CircularProgressIndicator();
+            return const SpinKitFadingCircle(
+              color: Colors.amber,
+              size: 100.0,
+            );
           },
         ));
   }

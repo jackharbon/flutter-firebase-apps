@@ -17,7 +17,8 @@ class _TextInputWidgetState extends State<TextInputWidget> {
     controller.dispose();
   }
 
-  void click() {
+  void publish() {
+    print('text_input | controller: $controller');
     widget.callback!(controller.text);
     FocusScope.of(context).unfocus();
     controller.clear();
@@ -27,7 +28,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      onSubmitted: (text) => click(),
+      onSubmitted: (text) => publish(),
       decoration: InputDecoration(
         prefixIcon: const Icon(Icons.message_outlined),
         labelText: 'Write your post',
@@ -36,7 +37,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           color: Colors.amber,
           hoverColor: Colors.orange,
           tooltip: 'Publish the post',
-          onPressed: click,
+          onPressed: publish,
           icon: const Icon(Icons.send),
         ),
       ),

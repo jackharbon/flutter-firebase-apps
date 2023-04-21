@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/models/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 
 class PostList extends StatefulWidget {
   final List<Post> listItems;
@@ -19,35 +20,62 @@ class _PostListState extends State<PostList> {
     });
   }
 
+  final controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
         itemCount: widget.listItems.length,
-        itemBuilder: (context, index) {
+        itemBuilder: (BuildContext context, int index) {
           var post = widget.listItems[index];
-          final DateTime postedTime = DateTime.parse(post.posted).toLocal();
-          final DateTime currentTime = DateTime.now();
-          final difference = currentTime.difference(postedTime);
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(4, 4, 8, 0),
+          final DateTime createdAtDateTime =
+              DateTime.parse(post.createdAt).toLocal();
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                // controller.text = post.body;
+              });
+              // print('====> post_list | widget.user: ${widget.user}');
+              // print('====> post_list | widget.user.uid: ${widget.user.uid}');
+              // print('====> post_list | post.uid: ${post.uid}');
+            },
             child: Column(
               children: [
-                Text('$difference'),
                 Card(
                     child: Row(children: <Widget>[
                   Expanded(
                       child: ListTile(
-                    title: Text(
-                      '${post.author} | ${post.posted}',
-                      style: const TextStyle(fontSize: 14),
+                    title: Row(
+                      children: [
+                        Text(
+                          post.author,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        const Text(' | '),
+                        AnimatedRelativeDateTimeBuilder(
+                          date: createdAtDateTime,
+                          builder: (relDateTime, formatted) {
+                            return Text(formatted,
+                                style: const TextStyle(fontSize: 12));
+                          },
+                        ),
+                      ],
                     ),
                     subtitle: Text(
                       post.body,
-                      style: const TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 16),
                     ),
                     leading: CircleAvatar(
+                      backgroundColor: Colors.transparent,
                       backgroundImage: NetworkImage(
                         post.avatar,
+                        // 'https://i.pravatar.cc/200',
                       ),
                     ),
                   )),
@@ -61,13 +89,13 @@ class _PostListState extends State<PostList> {
                         IconButton(
                           iconSize: 18.0,
                           onPressed: () => like(() => {
-                                post.likePost(widget.user),
-                                print(
-                                    '====> post_list | widget.user: ${widget.user}'),
+                                setState(() {
+                                  post.likePost(widget.user);
+                                }),
                               }),
                           splashColor: Colors.orange[200],
                           color: post.userLiked.contains(widget.user.uid)
-                              ? Colors.orange
+                              ? Colors.green
                               : Colors.black87,
                           icon: const Icon(Icons.thumb_up_alt_outlined),
                         ),
@@ -75,31 +103,55 @@ class _PostListState extends State<PostList> {
                           post.userLiked.length.toString(),
                           style: const TextStyle(fontSize: 16),
                         ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
                         IconButton(
                           iconSize: 18.0,
-                          onPressed: () => {},
-                          splashColor: Colors.orange[200],
-                          color: post.userLiked.contains(widget.user.uid)
-                              ? Colors.black
-                              : Colors.grey,
-                          icon: const Icon(Icons.edit),
-                        ),
-                        IconButton(
-                          iconSize: 18.0,
-                          onPressed: () => {},
+                          onPressed: () => like(() => {
+                                setState(() {
+                                  post.likeNotPost(widget.user);
+                                }),
+                              }),
                           splashColor: Colors.red[200],
-                          color: post.userLiked.contains(widget.user.uid)
+                          color: post.userDontLiked.contains(widget.user.uid)
                               ? Colors.red
-                              : Colors.grey,
-                          icon: const Icon(Icons.delete),
+                              : Colors.black87,
+                          icon: const Icon(Icons.thumb_down_alt_outlined),
+                        ),
+                        Text(
+                          post.userDontLiked.length.toString(),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
+                    if (post.uid == widget.user.uid)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            iconSize: 18.0,
+                            onPressed: () => {
+                              setState(() {
+                                controller.text = post.body;
+                              }),
+                            },
+                            padding: const EdgeInsets.all(0.0),
+                            splashColor: Colors.orange,
+                            color: Colors.black,
+                            icon: const Icon(Icons.edit_outlined),
+                          ),
+                          IconButton(
+                            iconSize: 18.0,
+                            onPressed: () => {
+                              setState(() {
+                                post.remove();
+                              }),
+                            },
+                            padding: const EdgeInsets.all(0.0),
+                            splashColor: Colors.red[200],
+                            color: Colors.red,
+                            icon: const Icon(Icons.delete_outline),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ],

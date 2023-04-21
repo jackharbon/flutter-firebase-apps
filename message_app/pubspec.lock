@@ -150,6 +150,19 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      sha256: "77a2117c0517ff909221f3160b8eb20052ab5216107581168af574ac1f05dff8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -248,6 +261,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  lit_relative_date_time:
+    dependency: "direct main"
+    description:
+      name: lit_relative_date_time
+      sha256: "26b04bdbd3dd1ec4ebcc04a947b1bee335ef5f029219a6f6cc01e5b152191a04"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   matcher:
     dependency: transitive
     description:

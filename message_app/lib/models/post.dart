@@ -7,8 +7,9 @@ class Post {
   String author;
   String body;
   String uid;
-  String posted;
+  String createdAt;
   Set userLiked = {};
+  Set userDontLiked = {};
   late DatabaseReference _id;
 
   Post(
@@ -16,7 +17,7 @@ class Post {
     this.author,
     this.body,
     this.uid,
-    this.posted,
+    this.createdAt,
   );
 
   void likePost(User user) {
@@ -24,12 +25,37 @@ class Post {
       userLiked.remove(user.uid);
     } else {
       userLiked.add(user.uid);
+      if (userDontLiked.contains(user.uid)) userDontLiked.remove(user.uid);
     }
+    print('====> post | likePost userLiked: ${userLiked.toString()}');
+    print('====> post | likePost userDontLiked: ${userDontLiked.toString()}');
+    update();
+  }
+
+  void likeNotPost(User user) {
+    if (userDontLiked.contains(user.uid)) {
+      userDontLiked.remove(user.uid);
+    } else {
+      userDontLiked.add(user.uid);
+      if (userLiked.contains(user.uid)) userLiked.remove(user.uid);
+    }
+    print('====> post | likeNotPost userLiked: ${userLiked.toString()}');
+    print(
+        '====> post | likeNotPost userDontLiked: ${userDontLiked.toString()}');
     update();
   }
 
   void update() {
     updatePost(this, _id);
+  }
+
+  void edit(body, id) {
+    print('====> post | edit: $body');
+    updatePost(this, _id);
+  }
+
+  void remove() {
+    removePost(this, _id);
   }
 
   void setId(DatabaseReference id) {
@@ -43,8 +69,17 @@ class Post {
         'author': author,
         'body': body,
         'uid': uid,
-        'posted': posted,
+        'createdAt': createdAt,
         'userLiked': userLiked.toList(),
+      };
+    } else if (userDontLiked.toList().isNotEmpty) {
+      return {
+        'avatar': avatar,
+        'author': author,
+        'body': body,
+        'uid': uid,
+        'createdAt': createdAt,
+        'userDontLiked': userDontLiked.toList(),
       };
     } else {
       return {
@@ -52,7 +87,7 @@ class Post {
         'author': author,
         'body': body,
         'uid': uid,
-        'posted': posted,
+        'createdAt': createdAt,
       };
     }
   }
@@ -64,8 +99,9 @@ Post createPost(record) {
     'author': '',
     'body': '',
     'uid': '',
-    'posted': '',
+    'createdAt': '',
     'userLiked': [],
+    'userDontLiked': [],
   };
 
   record.forEach((key, value) => attributes[key] = value);
@@ -75,11 +111,14 @@ Post createPost(record) {
     attributes['author'],
     attributes['body'],
     attributes['uid'],
-    attributes['posted'],
+    attributes['createdAt'],
   );
   if (attributes['userLiked'].isNotEmpty) {
     post.userLiked = Set.from(attributes['userLiked']);
   }
-  print('====> post | post: post');
+  if (attributes['userDontLiked'].isNotEmpty) {
+    post.userDontLiked = Set.from(attributes['userDontLiked']);
+  }
+  print('====> post | post: $post');
   return post;
 }

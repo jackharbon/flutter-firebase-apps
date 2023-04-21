@@ -17,7 +17,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Post> posts = [];
-  String postedDateString = DateTime.now().toLocal().toString();
+
+  String createdAtCurrentDate = DateTime.now().toString();
+  bool _sortAscending = true;
+
+  void sortPosts(bool ascending) {
+    setState(() {
+      _sortAscending = ascending;
+      posts.sort((a, b) => ascending
+          ? a.createdAt.compareTo(b.createdAt)
+          : b.createdAt.compareTo(a.createdAt));
+    });
+  }
 
   void newPost(String text) {
     var post = Post(
@@ -25,14 +36,14 @@ class _MyHomePageState extends State<MyHomePage> {
       widget.user.displayName!,
       text,
       widget.user.uid,
-      postedDateString,
+      createdAtCurrentDate,
     );
     post.setId(savePost(post));
     setState(() {
       posts.add(post);
     });
     print(
-        '====> home_page | newPost author: ${post.author} body: ${post.body} posted: ${post.posted} uid: ${post.uid} liked: {post.userLiked}');
+        '====> home_page | newPost author: ${post.author} body: ${post.body} createdAt: ${post.createdAt} createdAtCurrentDate: $createdAtCurrentDate uid: ${post.uid} liked: {post.userLiked}');
   }
 
   void updateMessages() async {
@@ -48,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     updateMessages();
+    sortPosts(_sortAscending);
   }
 
   @override
@@ -58,9 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Posts'),
-            CircleAvatar(
-              backgroundImage: NetworkImage(
-                widget.user.photoURL!,
+            SizedBox(
+              height: 30,
+              child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                backgroundImage: NetworkImage(
+                  widget.user.photoURL!,
+                  // 'https://i.pravatar.cc/200',
+                ),
               ),
             ),
           ],
@@ -69,15 +86,51 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              _sortAscending
+                  ? ElevatedButton.icon(
+                      icon: const Icon(Icons.arrow_downward),
+                      label: const Text('Oldest first'),
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.black54),
+                        overlayColor: MaterialStateProperty.all(Colors.white),
+                        shadowColor: MaterialStateProperty.all(Colors.white),
+                        elevation: MaterialStateProperty.all(0),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          sortPosts(false);
+                          print(_sortAscending);
+                        });
+                      },
+                    )
+                  : ElevatedButton.icon(
+                      icon: const Icon(Icons.arrow_upward),
+                      label: const Text('Newest first'),
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.black54),
+                        overlayColor: MaterialStateProperty.all(Colors.white),
+                        shadowColor: MaterialStateProperty.all(Colors.white),
+                        elevation: MaterialStateProperty.all(0),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          sortPosts(true);
+                          print(_sortAscending);
+                        });
+                      },
+                    ),
+            ],
+          ),
           Expanded(
               child: PostList(
             posts,
             widget.user,
           )),
-          Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Text('You are logged in as: ${widget.user.displayName}'),
-          ),
           TextInputWidget(newPost),
         ],
       ),
