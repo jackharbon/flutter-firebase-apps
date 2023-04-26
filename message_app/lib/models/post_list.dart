@@ -7,7 +7,10 @@ class PostList extends StatefulWidget {
   final List<Post> listItems;
   final User user;
 
-  PostList(this.listItems, this.user);
+  PostList(
+    this.listItems,
+    this.user,
+  );
 
   @override
   State<PostList> createState() => _PostListState();
@@ -21,10 +24,12 @@ class _PostListState extends State<PostList> {
   }
 
   final controller = TextEditingController();
+  late List<Post> listItems;
 
   @override
   void initState() {
     super.initState();
+    listItems = widget.listItems;
   }
 
   @override
@@ -32,8 +37,8 @@ class _PostListState extends State<PostList> {
     return ListView.builder(
         padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
         itemCount: widget.listItems.length,
-        itemBuilder: (BuildContext context, int index) {
-          var post = widget.listItems[index];
+        itemBuilder: (context, index) {
+          final post = widget.listItems[index];
           final DateTime createdAtDateTime =
               DateTime.parse(post.createdAt).toLocal();
           return GestureDetector(
@@ -43,7 +48,7 @@ class _PostListState extends State<PostList> {
               });
               // print('====> post_list | widget.user: ${widget.user}');
               // print('====> post_list | widget.user.uid: ${widget.user.uid}');
-              // print('====> post_list | post.uid: ${post.uid}');
+              print('====> post_list | post.uid: ${post.body}');
             },
             child: Column(
               children: [
@@ -107,17 +112,17 @@ class _PostListState extends State<PostList> {
                           iconSize: 18.0,
                           onPressed: () => like(() => {
                                 setState(() {
-                                  post.likeNotPost(widget.user);
+                                  post.dislikePost(widget.user);
                                 }),
                               }),
                           splashColor: Colors.red[200],
-                          color: post.userDontLiked.contains(widget.user.uid)
+                          color: post.userDisLiked.contains(widget.user.uid)
                               ? Colors.red
                               : Colors.black87,
                           icon: const Icon(Icons.thumb_down_alt_outlined),
                         ),
                         Text(
-                          post.userDontLiked.length.toString(),
+                          post.userDisLiked.length.toString(),
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
@@ -140,10 +145,12 @@ class _PostListState extends State<PostList> {
                           ),
                           IconButton(
                             iconSize: 18.0,
-                            onPressed: () => {
+                            onPressed: () {
                               setState(() {
                                 post.remove();
-                              }),
+                                widget.listItems.removeAt(index);
+                                print('====> post_list | index: $index');
+                              });
                             },
                             padding: const EdgeInsets.all(0.0),
                             splashColor: Colors.red[200],

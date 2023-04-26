@@ -31,9 +31,16 @@ void updatePost(Post post, DatabaseReference id) async {
   print('====> database | updatePost update: ${post.toJson()}');
 }
 
-void removePost(Post post, DatabaseReference id) async {
-  await id.remove();
-  print('====> database | removePost remove: ${post.toJson()}');
+void removePost(
+  Post post,
+  DatabaseReference id,
+) async {
+  await id
+      .remove()
+      .then((_) =>
+          print('====> database | removePost: post ${post.toJson()} removed'))
+      .catchError(
+          (error) => print('====> database | removePost error: $error'));
 }
 
 Future<List<Post>> getAllPosts() async {

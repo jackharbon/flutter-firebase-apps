@@ -9,7 +9,7 @@ class Post {
   String uid;
   String createdAt;
   Set userLiked = {};
-  Set userDontLiked = {};
+  Set userDisLiked = {};
   late DatabaseReference _id;
 
   Post(
@@ -25,23 +25,22 @@ class Post {
       userLiked.remove(user.uid);
     } else {
       userLiked.add(user.uid);
-      if (userDontLiked.contains(user.uid)) userDontLiked.remove(user.uid);
+      if (userDisLiked.contains(user.uid)) userDisLiked.remove(user.uid);
     }
     print('====> post | likePost userLiked: ${userLiked.toString()}');
-    print('====> post | likePost userDontLiked: ${userDontLiked.toString()}');
+    print('====> post | likePost userDisLiked: ${userDisLiked.toString()}');
     update();
   }
 
-  void likeNotPost(User user) {
-    if (userDontLiked.contains(user.uid)) {
-      userDontLiked.remove(user.uid);
+  void dislikePost(User user) {
+    if (userDisLiked.contains(user.uid)) {
+      userDisLiked.remove(user.uid);
     } else {
-      userDontLiked.add(user.uid);
+      userDisLiked.add(user.uid);
       if (userLiked.contains(user.uid)) userLiked.remove(user.uid);
     }
-    print('====> post | likeNotPost userLiked: ${userLiked.toString()}');
-    print(
-        '====> post | likeNotPost userDontLiked: ${userDontLiked.toString()}');
+    print('====> post | dislikePost userLiked: ${userLiked.toString()}');
+    print('====> post | dislikePost userDisLiked: ${userDisLiked.toString()}');
     update();
   }
 
@@ -72,14 +71,14 @@ class Post {
         'createdAt': createdAt,
         'userLiked': userLiked.toList(),
       };
-    } else if (userDontLiked.toList().isNotEmpty) {
+    } else if (userDisLiked.toList().isNotEmpty) {
       return {
         'avatar': avatar,
         'author': author,
         'body': body,
         'uid': uid,
         'createdAt': createdAt,
-        'userDontLiked': userDontLiked.toList(),
+        'userDisLiked': userDisLiked.toList(),
       };
     } else {
       return {
@@ -101,7 +100,7 @@ Post createPost(record) {
     'uid': '',
     'createdAt': '',
     'userLiked': [],
-    'userDontLiked': [],
+    'userDisLiked': [],
   };
 
   record.forEach((key, value) => attributes[key] = value);
@@ -116,8 +115,8 @@ Post createPost(record) {
   if (attributes['userLiked'].isNotEmpty) {
     post.userLiked = Set.from(attributes['userLiked']);
   }
-  if (attributes['userDontLiked'].isNotEmpty) {
-    post.userDontLiked = Set.from(attributes['userDontLiked']);
+  if (attributes['userDisLiked'].isNotEmpty) {
+    post.userDisLiked = Set.from(attributes['userDisLiked']);
   }
   print('====> post | post: $post');
   return post;

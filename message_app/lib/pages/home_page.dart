@@ -8,9 +8,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 class MyHomePage extends StatefulWidget {
   final User user;
 
-  const MyHomePage(
+  MyHomePage(
     this.user,
   );
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -103,7 +104,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         setState(() {
                           sortPosts(false);
-                          print(_sortAscending);
+                          print(
+                              '====> home_page | _sortAscending: $_sortAscending');
                         });
                       },
                     )
@@ -120,7 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         setState(() {
                           sortPosts(true);
-                          print(_sortAscending);
+                          print(
+                              '====> home_page | _sortAscending: $_sortAscending');
                         });
                       },
                     ),
